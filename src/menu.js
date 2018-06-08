@@ -41,12 +41,12 @@ function start (pubsub, resources) {
     const menuItems = MENU_ITEMS.map((item, index) => {
         const text = new PIXI.Text(item.name, {
             fill: '#53b4c6',
-            fontSize: 100,
+            fontSize: 65,
             lineJoin: 'round',
             padding: 5,
             align: 'left',
             stroke: '#235860',
-            strokeThickness: 12
+            strokeThickness: 8
         });
 
         text.y = 200 + index * text.height * 1.1;

@@ -3,7 +3,7 @@ import { getRenderLayer } from './renderer';
 import loader from './loader.js';
 import { TimelineMax, TweenLite } from 'gsap';
 
-const STACK_AMPLIFIER = 3;
+const STACK_AMPLIFIER = 2;
 
 function start () {
     const layer = getRenderLayer('cards');
@@ -20,8 +20,8 @@ function start () {
                     type: 'soft',
                     values: [
                         { x: card.x, y: card.y},
-                        { x: card.x + 400, y: card.y - 500 - index * STACK_AMPLIFIER },
-                        { x: card.x + 800, y: card.y + (cards.length * STACK_AMPLIFIER - index * STACK_AMPLIFIER * 2) },
+                        { x: card.x + 125, y: card.y - 250 - index * STACK_AMPLIFIER },
+                        { x: card.x + 250, y: card.y + (cards.length * STACK_AMPLIFIER - index * STACK_AMPLIFIER * 2) },
                     ]
                 }
             });
@@ -49,9 +49,9 @@ function resetCards (resources, layer) {
 
         card.anchor = new PIXI.Point(0.5, 0.5);
 
-        card.x = Math.random() * 30 - 15;
-        card.y = Math.random() * 30 - 15 - index * STACK_AMPLIFIER;
-        card.scale = new PIXI.Point(5, 5);
+        card.x = Math.random() * 20 - 10;
+        card.y = Math.random() * 20 - 10 - index * STACK_AMPLIFIER;
+        card.scale = new PIXI.Point(2, 2);
         card.rotation = (Math.random() * 16 - 8) * Math.PI / 180;
 
         layer.addChild(card);
@@ -63,8 +63,8 @@ function resetCards (resources, layer) {
 function setup (pubsub, resources) {
     const layer = getRenderLayer('cards');
 
-    layer.x = 600;
-    layer.y = 900;
+    layer.x = 100;
+    layer.y = 600;
     layer.visible = false;
 
     pubsub.subscribe('menuCard', () => {

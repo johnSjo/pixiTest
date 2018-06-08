@@ -27,18 +27,18 @@ function start () {
 
     layer.interval = setInterval(() => {
         const randomString = createRandomString();
-        const fontSize = Math.random() * 100 + 50;
+        const fontSize = Math.random() * 50 + 25;
 
         layer.removeChildren();
     
-        printString(deconstructString(randomString), { x: 100, y: 300 + fontSize * 1.2 }, {
+        printString(deconstructString(randomString), { x: 20, y: 300 + fontSize * 1.2 }, {
             fill: '#53b4c6',
             fontSize,
             lineJoin: 'round',
             padding: 5,
             align: 'left',
             stroke: '#235860',
-            strokeThickness: 12
+            strokeThickness: fontSize * 0.125
         });
     }, 2000);
 
@@ -127,14 +127,14 @@ function printString (items, position, style) {
 function reset (resources, layer) {
     const testString = 'Hello there :). Where did that come from :/? Never mind ;)';
 
-    printString(deconstructString(testString), { x: 100, y: 300 }, {
+    printString(deconstructString(testString), { x: 20, y: 300 }, {
         fill: '#53b4c6',
-        fontSize: 50,
+        fontSize: 30,
         lineJoin: 'round',
         padding: 5,
         align: 'left',
         stroke: '#235860',
-        strokeThickness: 12
+        strokeThickness: 5
     });
 }
 
