@@ -1,17 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { getRenderLayer } from './renderer';
 import loader from './loader.js';
-import { start as cardsStart, hide as cardsHide } from './cardShuffler.js';
-import { start as textStart, hide as textHide } from './mixText';
-import { start as fireStart, hide as fireHide } from './fire';
 
 const MENU_ITEMS = [
-    { name: 'Card Shuffler', demo: cardsStart, hide: cardsHide },
-    { name: 'Text Mixer', demo: textStart, hide: textHide },
-    { name: 'Fire', demo: fireStart, hide: fireHide }
+    { name: 'Card Shuffler', event: 'menuCard' },
+    { name: 'Text Mixer', event: 'menuText' },
+    { name: 'Fire', event: 'menuFire' }
 ];
 
-function createBackArrow (resources, layer, toggelMenu) {
+function createBackArrow (pubsub, resources, layer, toggelMenu) {
     const backArrow = new PIXI.Sprite(resources.backArrow.texture);
 
     backArrow.scale = new PIXI.Point(0.3, 0.3);
@@ -21,9 +18,7 @@ function createBackArrow (resources, layer, toggelMenu) {
     backArrow.cursor = 'pointer';
 
     backArrow.on('pointerup', () => {
-        MENU_ITEMS.forEach((item) => {
-            item.hide();
-        });
+        pubsub.publish('menuBack');
         toggelMenu();
     });
 
@@ -32,7 +27,7 @@ function createBackArrow (resources, layer, toggelMenu) {
     return backArrow;
 }
 
-function start (resources) {
+function start (pubsub, resources) {
 
     const layer = getRenderLayer('mainMenu');
     const toggelMenu = () => {
@@ -41,7 +36,7 @@ function start (resources) {
         });
         backArrow.visible = !backArrow.visible;
     };
-    const backArrow = createBackArrow(resources, layer, toggelMenu);
+    const backArrow = createBackArrow(pubsub, resources, layer, toggelMenu);
 
     const menuItems = MENU_ITEMS.map((item, index) => {
         const text = new PIXI.Text(item.name, {
@@ -61,7 +56,7 @@ function start (resources) {
 
         text.on('pointerup', () => {
             toggelMenu();
-            item.demo();
+            pubsub.publish(item.event);
         });
 
         layer.addChild(text);
@@ -74,13 +69,13 @@ function start (resources) {
 
 export default {
 
-    init () {
+    init (pubsub) {
 
         const assets = [
             { name: 'backArrow', url: 'assets/arrow.png' }
         ];
 
-        loader.loadResources(assets).then((resources) => start(resources));
+        loader.loadResources(assets).then((resources) => start(pubsub, resources));
     }
 
 };
