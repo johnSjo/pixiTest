@@ -5,7 +5,7 @@ import { TimelineMax, TweenLite } from 'gsap';
 
 const STACK_AMPLIFIER = 3;
 
-export function start () {
+function start () {
     const layer = getRenderLayer('cards');
     const cards = layer.children.slice().reverse();
 
@@ -14,7 +14,7 @@ export function start () {
     cards.forEach((card, index) => {
         const timeLine = new TimelineMax();
 
-        timeLine.delay(index * 0.1).
+        card.timeLine = timeLine.delay(index).
             to(card, 2, {
                 bezier: {
                     type: 'soft',
@@ -26,25 +26,24 @@ export function start () {
                 }
             });
 
-        TweenLite.delayedCall(index * 0.1 + 1, () => {
+        card.tween = TweenLite.delayedCall(index + 1, () => {
             layer.addChildAt(layer.removeChild(card), index);
         });
     });
 }
 
-export function hide () {
+function hide () {
     const layer = getRenderLayer('cards');
 
     layer.visible = false;
+    layer.children.forEach((card) => {
+        card.timeLine.kill();
+        card.tween.kill();
+    });
+    layer.removeChildren();
 }
 
-function setup (resources) {
-    const layer = getRenderLayer('cards');
-
-    layer.x = 600;
-    layer.y = 900;
-    layer.visible = false;
-
+function resetCards (resources, layer) {
     Object.entries(resources).forEach(([name, resource], index) => {
         const card = new PIXI.Sprite(resource.texture);
 
@@ -61,9 +60,25 @@ function setup (resources) {
     });
 }
 
+function setup (pubsub, resources) {
+    const layer = getRenderLayer('cards');
+
+    layer.x = 600;
+    layer.y = 900;
+    layer.visible = false;
+
+    pubsub.subscribe('menuCard', () => {
+        resetCards(resources, layer);
+        start();
+    });
+
+    pubsub.subscribe('menuBack', hide);
+
+}
+
 export default {
 
-    init () {
+    init (pubsub) {
 
         const assets = [
             'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AN', 'AO', 'AQ',
@@ -86,7 +101,7 @@ export default {
                 return `assets/flags/${name}.png`;
             });
 
-        loader.loadResources(assets).then((resources) => setup(resources));
+        loader.loadResources(assets).then((resources) => setup(pubsub, resources));
     }
 
 };
